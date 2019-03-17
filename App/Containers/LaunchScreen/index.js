@@ -12,6 +12,7 @@ import ScrollableTabView, {
   ScrollableTabBar
 } from "react-native-scrollable-tab-view";
 import { Images, Colors } from "../../Themes";
+import BottomPillButton from "../../Components/BottomPillButton";
 
 // Styles
 import styles from "./styles";
@@ -29,7 +30,7 @@ class LaunchScreen extends Component {
     let data = [
       {
         title: "Round 1",
-        teams: [0, 1, 2, 3]
+        teams: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
       },
       {
         title: "Round 2",
@@ -67,30 +68,39 @@ class LaunchScreen extends Component {
               return;
             }
             return (
-              <FlatList
-                contentContainerStyle={{
-                  paddingBottom: scale(100),
-                }}
-                tabLabel={round.title}
-                key={round.title}
-                data={round.teams}
-                extraData={this.state}
-                keyExtractor={item => item.title}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.props.navigation.navigate("JudgingScreen", {
-                        teamNumber: item
-                      });
-                    }}
-                  >
-                    <Text>{item}</Text>
-                  </TouchableOpacity>
-                )}
-              />
+              <View tabLabel={round.title} key={round.title}>
+                <FlatList
+                  contentContainerStyle={{
+                    paddingBottom: scale(100)
+                  }}
+                  data={round.teams}
+                  extraData={this.state}
+                  keyExtractor={item => item.title}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={{
+                        height: scale(60)
+                      }}
+                      onPress={() => {
+                        this.props.navigation.navigate("JudgingScreen", {
+                          teamNumber: item
+                        });
+                      }}
+                    >
+                      <Text>{item}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
             );
           })}
         </ScrollableTabView>
+        <BottomPillButton
+          onPress={() => {
+            this.props.navigation.navigate("JudgingScreen");
+          }}
+          title="Judge New Team"
+        />
       </View>
     );
   }

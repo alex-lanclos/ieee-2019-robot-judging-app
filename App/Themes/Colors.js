@@ -3,6 +3,7 @@ const colors = {
   text: "#FFFFFF",
   hint: "#FFFFFF80",
   vermillion: "#A00B0B",
+  disabledGrey: `#99a6b3`,
   background: "#1F0808",
   clear: "rgba(0,0,0,0)",
   facebook: "#3b5998",
