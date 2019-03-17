@@ -6,6 +6,19 @@ import { Images } from "../../Themes";
 import styles from "./styles";
 
 export default class JudgingScreen extends Component {
+  static navigationOptions = ({ navigation }) => {
+    const {
+      params = {
+        teamNumber: -1
+      }
+    } = navigation.state;
+
+    return {
+      headerTitle: "Team " + params.teamNumber,
+      backTitle: null
+    };
+  };
+
   render() {
     return (
       <View style={styles.mainContainer}>

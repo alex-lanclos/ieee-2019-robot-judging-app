@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { Metrics, ApplicationStyles } from "../../Themes/";
 
 export default StyleSheet.create({
@@ -14,5 +14,10 @@ export default StyleSheet.create({
   },
   centered: {
     alignItems: "center"
+  },
+  tabBarContainer: {
+    width: Dimensions.get(`window`).width,
+    justifyContent: `center`,
+    alignItems: `center`
   }
 });
