@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native";
 import { Metrics, ApplicationStyles } from "../../Themes/";
+import { scale } from "../../Lib/Scaling";
 
 export default StyleSheet.create({
   ...ApplicationStyles.screen,
@@ -19,5 +20,13 @@ export default StyleSheet.create({
     width: Dimensions.get(`window`).width,
     justifyContent: `center`,
     alignItems: `center`
+  },
+  textLabel: {
+    fontSize: scale(16),
+    fontWeight: "300"
+  },
+  textValue: {
+    fontSize: scale(18),
+    fontWeight: "500"
   }
 });

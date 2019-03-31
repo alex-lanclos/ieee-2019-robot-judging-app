@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, TouchableHighlight, Text } from 'react-native';
-import PropTypes from 'prop-types';
-import tinycolor from 'tinycolor2';
-import styles from './styles';
-import { Colors } from '../../Themes';
+import React from "react";
+import { View, TouchableHighlight, Text } from "react-native";
+import PropTypes from "prop-types";
+import tinycolor from "tinycolor2";
+import styles from "./styles";
+import { Colors } from "../../Themes";
 
 const propTypes = {
   style: PropTypes.oneOfType([PropTypes.shape({}), PropTypes.array]),
@@ -17,8 +17,8 @@ const propTypes = {
   icon: PropTypes.shape({
     color: PropTypes.string,
     name: PropTypes.string,
-    size: PropTypes.number,
-  }),
+    size: PropTypes.number
+  })
 };
 
 const defaultProps = {
@@ -29,7 +29,7 @@ const defaultProps = {
   inverse: false,
   buttonColor: Colors.vermillion,
   textColor: Colors.snow,
-  enabled: true,
+  enabled: true
 };
 
 class PillButton extends React.PureComponent {
@@ -42,8 +42,8 @@ class PillButton extends React.PureComponent {
           style={[
             styles.subText,
             {
-              color: textColor,
-            },
+              color: textColor
+            }
           ]}>
           {subtitle}
         </Text>
@@ -59,7 +59,7 @@ class PillButton extends React.PureComponent {
       enabled,
       onPress,
       inverse,
-      buttonColor,
+      buttonColor
     } = this.props;
 
     let { textColor } = this.props;
@@ -87,18 +87,18 @@ class PillButton extends React.PureComponent {
         backgroundStyle,
         {
           backgroundColor,
-          borderColor: buttonColor,
+          borderColor: buttonColor
         },
-        style,
+        style
       ];
     } else {
       buttonStyle = [
         backgroundStyle,
         {
           backgroundColor,
-          borderColor: buttonColor,
+          borderColor: buttonColor
         },
-        style,
+        style
       ];
     }
 
@@ -113,8 +113,8 @@ class PillButton extends React.PureComponent {
               style={[
                 styles.text,
                 {
-                  color: textColor,
-                },
+                  color: textColor
+                }
               ]}>
               {title}
             </Text>
