@@ -120,8 +120,8 @@ export default class JudgingScreen extends Component {
           placeholder="# of Blocks"
           placeholderTextColor={Colors.ricePaper}
           keyboardType="numeric"
-          defaultValue={this.state[value]}
-          value={this.state[value]}
+          defaultValue={String(this.state[value])}
+          value={String(this.state[value])}
           underlineColorAndroid="transparent"
           onChangeText={text => {
             this.setState({
@@ -136,14 +136,10 @@ export default class JudgingScreen extends Component {
   render() {
     const {
       round,
-      blocksPickedUp,
-      blocksPlacedInMotherShip,
-      blocksInCorrectSlot,
       perfectRun,
       timeToCompletionMinutes,
       timeToCompletionSeconds,
       timeToCompletionMilliseconds,
-      obstaclesHit,
       totalScore
     } = this.state;
     return (
@@ -166,10 +162,16 @@ export default class JudgingScreen extends Component {
             Round {round}
           </Text>
           {this._renderRow("The Number of Blocks\nPicked Up", "blocksPickedUp")}
-          {this._renderRow("The Number of Blocks\nPicked Up", "blocksPickedUp")}
-          {this._renderRow("The Number of Blocks\nPicked Up", "blocksPickedUp")}
-          {this._renderRow("The Number of Blocks\nPicked Up", "blocksPickedUp")}
-          {this._renderRow("The Number of Blocks\nPicked Up", "blocksPickedUp")}
+          {this._renderRow(
+            "The Number of Blocks\nPlaced in Mothership",
+            "blocksPlacedInMotherShip"
+          )}
+          {this._renderRow(
+            "The Number of Blocks\nPlaced in Correct Slot",
+            "blocksInCorrectSlot"
+          )}
+          {this._renderRow("The Number of Obstacles\nHit", "obstaclesHit")}
+
           {/* <View
             style={{
               flexDirection: "row",
