@@ -17,6 +17,7 @@ import BottomPillButton from "../../Components/BottomPillButton";
 // Styles
 import styles from "./styles";
 import { scale } from "../../Lib/Scaling";
+import { calculateTotalScore } from "../../Lib/CalculateTotal";
 
 class LaunchScreen extends Component {
   static navigationOptions = () => {
@@ -192,7 +193,13 @@ class LaunchScreen extends Component {
                             }}>
                             <Text style={styles.textLabel}>Total Score: </Text>
                             <Text style={styles.textValue}>
-                              {item.totalScore}
+                              {calculateTotalScore(
+                                item.blocksPickedUp,
+                                item.blocksPlacedInMotherShip,
+                                item.blocksInCorrectSlot,
+                                item.perfectRun,
+                                item.obstaclesHit
+                              )}
                             </Text>
                           </Text>
                         </View>

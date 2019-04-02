@@ -1,7 +1,18 @@
 import React, { Component } from "react";
-import { ScrollView, Text, Image, View, TextInput } from "react-native";
+import {
+  ScrollView,
+  Text,
+  Image,
+  View,
+  TextInput,
+  Switch,
+  TouchableOpacity
+} from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Images, Colors } from "../../Themes";
 import { scale } from "../../Lib/Scaling";
+import { calculateTotalScore } from "../../Lib/CalculateTotal";
+import BottomPillButton from "../../Components/BottomPillButton";
 
 // Styles
 import styles from "./styles";
@@ -17,7 +28,25 @@ export default class JudgingScreen extends Component {
     return {
       headerTitle:
         "Team " + params.teamRound.teamId + "-" + params.teamRound.teamName,
-      backTitle: null
+      backTitle: null,
+      headerRight: (
+        <View style={{ flexDirection: `row`, paddingRight: scale(16) }}>
+          <TouchableOpacity
+            style={{
+              height: scale(24),
+              width: scale(24),
+              marginLeft: scale(10),
+              fontSize: scale(20),
+              alignItems: `center`,
+              justifyContent: `center`
+            }}
+            onPress={() => {
+              params.setEditable();
+            }}>
+            <Icon name="pencil" size={scale(20)} color={Colors.black} />
+          </TouchableOpacity>
+        </View>
+      )
     };
   };
 
@@ -26,32 +55,13 @@ export default class JudgingScreen extends Component {
 
     let teamRound = this.props.navigation.getParam(`teamRound`, {});
 
-    // let object = {
-    //   round: 1,
-    //   teamName: "Cool Team",
-    //   teamId: 0,
-    //   blocksPickedUp: 2,
-    //   blocksPlacedInMotherShip: 2,
-    //   blocksInCorrectSlot: 2,
-    //   perfectRun: true,
-    //   timeToCompletionMinutes: 5,
-    //   timeToCompletionSeconds: 30,
-    //   timeToCompletionMilliseconds: 0,
-    //   obstaclesHit: 0,
-    //   totalScore: 175
-    // };
-
     const {
       round,
       blocksPickedUp,
       blocksPlacedInMotherShip,
       blocksInCorrectSlot,
       perfectRun,
-      timeToCompletionMinutes,
-      timeToCompletionSeconds,
-      timeToCompletionMilliseconds,
-      obstaclesHit,
-      totalScore
+      obstaclesHit
     } = teamRound;
 
     this.state = {
@@ -60,13 +70,20 @@ export default class JudgingScreen extends Component {
       blocksPlacedInMotherShip,
       blocksInCorrectSlot,
       perfectRun,
-      timeToCompletionMinutes,
-      timeToCompletionSeconds,
-      timeToCompletionMilliseconds,
       obstaclesHit,
-      totalScore
+      editable: false
     };
   }
+
+  componentDidMount() {
+    this.props.navigation.setParams({ setEditable: this._setEditable });
+  }
+
+  _setEditable = () => {
+    this.setState({
+      editable: true
+    });
+  };
 
   getNumberOfBlocksRegex() {
     const { round } = this.state;
@@ -81,15 +98,60 @@ export default class JudgingScreen extends Component {
     }
   }
 
-  _renderRow(label, value) {
-    console.tron.log("blocksPickedUp", this.state.blocksPickedUp);
+  limitNumberOfObstacles(text) {
+    const { round, obstaclesHit } = this.state;
+    let newText = obstaclesHit;
+    let tempText = text.replace(/[^0-9]/g, ``);
 
+    switch (round) {
+      case 1:
+        newText = tempText <= 5 ? tempText : newText;
+        break;
+      case 2:
+        newText = tempText <= 10 ? tempText : newText;
+        break;
+      case 3:
+        newText = tempText <= 15 ? tempText : newText;
+        break;
+    }
+
+    return newText;
+  }
+
+  modifyQuantity(shouldIncrement, value, isBlock) {
+    const { round, editable } = this.state;
+
+    if (editable) {
+      let oldValue = this.state[value];
+      let newValue = oldValue;
+
+      if (shouldIncrement) {
+        if (!isBlock || oldValue < round * 2) {
+          newValue = Number(newValue) + 1;
+        }
+      } else {
+        if (oldValue > 0) {
+          newValue = Number(newValue) - 1;
+        }
+      }
+
+      this.setState({
+        [value]: isBlock
+          ? newValue
+          : this.limitNumberOfObstacles(String(newValue))
+      });
+    }
+  }
+
+  _renderRow(label, value) {
     return (
       <View
         style={{
           flexDirection: "row",
           width: "100%",
-          paddingTop: scale(15)
+          paddingTop: scale(15),
+          justifyContent: "center",
+          alignItems: "center"
         }}>
         <Text
           textAlign="Center"
@@ -102,6 +164,14 @@ export default class JudgingScreen extends Component {
           {label}
         </Text>
 
+        <TouchableOpacity
+          style={{ marginLeft: `auto` }}
+          onPress={() => {
+            this.modifyQuantity(false, value, true);
+          }}>
+          <Icon name="minus" size={scale(25)} color={Colors.vermillion} />
+        </TouchableOpacity>
+
         <TextInput
           style={{
             color: Colors.snow,
@@ -111,13 +181,15 @@ export default class JudgingScreen extends Component {
             padding: scale(5),
             borderColor: Colors.snow,
             borderRadius: 5,
-            width: scale(100)
+            width: scale(50),
+            height: scale(40),
+            marginHorizontal: scale(8)
           }}
           textAlign={"center"}
           maxLength={1}
-          enabled={true}
+          editable={this.state.editable}
           keyboardShouldPersistTaps="always"
-          placeholder="# of Blocks"
+          placeholder="0"
           placeholderTextColor={Colors.ricePaper}
           keyboardType="numeric"
           defaultValue={String(this.state[value])}
@@ -129,19 +201,35 @@ export default class JudgingScreen extends Component {
             });
           }}
         />
+
+        <TouchableOpacity
+          onPress={() => {
+            this.modifyQuantity(true, value, true);
+          }}>
+          <Icon name="plus" size={scale(25)} color={Colors.vermillion} />
+        </TouchableOpacity>
       </View>
     );
   }
 
+  _renderBottomButton = () => {
+    if (this.state.editable) {
+      return <BottomPillButton onPress={() => {}} title="Save" />;
+    }
+  };
+
   render() {
     const {
       round,
+      blocksPickedUp,
+      blocksPlacedInMotherShip,
+      blocksInCorrectSlot,
       perfectRun,
-      timeToCompletionMinutes,
-      timeToCompletionSeconds,
-      timeToCompletionMilliseconds,
-      totalScore
+      obstaclesHit
     } = this.state;
+
+    console.tron.log("editable", this.state.editable);
+
     return (
       <View style={styles.mainContainer}>
         <ScrollView
@@ -170,9 +258,73 @@ export default class JudgingScreen extends Component {
             "The Number of Blocks\nPlaced in Correct Slot",
             "blocksInCorrectSlot"
           )}
-          {this._renderRow("The Number of Obstacles\nHit", "obstaclesHit")}
 
-          {/* <View
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              paddingTop: scale(15),
+              justifyContent: "center",
+              alignItems: "center"
+            }}>
+            <Text
+              textAlign="Center"
+              style={{
+                color: Colors.snow,
+                fontSize: scale(18),
+                fontWeight: "500",
+                flex: 1
+              }}>
+              {"The Number of Obstacles\nHit"}
+            </Text>
+
+            <TouchableOpacity
+              style={{ marginLeft: `auto` }}
+              onPress={() => {
+                this.modifyQuantity(false, "obstaclesHit", false);
+              }}>
+              <Icon name="minus" size={scale(25)} color={Colors.vermillion} />
+            </TouchableOpacity>
+
+            <TextInput
+              style={{
+                color: Colors.snow,
+                fontSize: scale(16),
+                fontWeight: "500",
+                borderWidth: scale(1),
+                padding: scale(5),
+                borderColor: Colors.snow,
+                borderRadius: 5,
+                width: scale(50),
+                height: scale(40),
+                marginHorizontal: scale(8)
+              }}
+              textAlign={"center"}
+              maxLength={2}
+              editable={this.state.editable}
+              keyboardShouldPersistTaps="always"
+              placeholder="0"
+              placeholderTextColor={Colors.ricePaper}
+              keyboardType="numeric"
+              defaultValue={String(this.state.obstaclesHit)}
+              value={String(this.state.obstaclesHit)}
+              underlineColorAndroid="transparent"
+              onChangeText={text => {
+                this.setState({
+                  obstaclesHit: this.limitNumberOfObstacles(text)
+                });
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={() => {
+                this.modifyQuantity(true, "obstaclesHit", false);
+              }}>
+              <Icon name="plus" size={scale(25)} color={Colors.vermillion} />
+            </TouchableOpacity>
+          </View>
+
+          <View
             style={{
               flexDirection: "row",
               width: "100%",
@@ -186,40 +338,55 @@ export default class JudgingScreen extends Component {
                 fontWeight: "500",
                 flex: 1
               }}>
-              The Number of Blocks{"\n"}Picked Up
+              Perfect Run
             </Text>
 
-            <TextInput
-              style={{
-                color: Colors.snow,
-                fontSize: scale(16),
-                fontWeight: "500",
-                borderWidth: scale(1),
-                padding: scale(5),
-                borderColor: Colors.snow,
-                borderRadius: 5,
-                width: scale(100)
-              }}
-              textAlign={"center"}
-              maxLength={1}
-              enabled={true}
-              keyboardShouldPersistTaps="always"
-              placeholder="# of Blocks"
-              placeholderTextColor={Colors.ricePaper}
-              keyboardType="numeric"
-              value={this.state.blocksPickedUp}
-              underlineColorAndroid="transparent"
-              onChangeText={text => {
+            <Switch
+              disabled={!this.state.editable}
+              value={perfectRun}
+              onValueChange={value => {
                 this.setState({
-                  blocksPickedUp: text.replace(
-                    this.getNumberOfBlocksRegex(),
-                    ``
-                  )
+                  perfectRun: value
                 });
               }}
             />
-          </View> */}
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              paddingTop: scale(100)
+            }}>
+            <Text
+              textAlign="Center"
+              style={{
+                color: Colors.snow,
+                fontSize: scale(18),
+                fontWeight: "500",
+                flex: 1
+              }}>
+              Total Score:
+            </Text>
+
+            <Text
+              textAlign="Center"
+              style={{
+                color: Colors.snow,
+                fontSize: scale(18),
+                fontWeight: "700"
+              }}>
+              {calculateTotalScore(
+                blocksPickedUp,
+                blocksPlacedInMotherShip,
+                blocksInCorrectSlot,
+                perfectRun,
+                obstaclesHit
+              )}
+            </Text>
+          </View>
         </ScrollView>
+        {this._renderBottomButton()}
       </View>
     );
   }
