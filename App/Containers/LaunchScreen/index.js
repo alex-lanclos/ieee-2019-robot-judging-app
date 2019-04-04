@@ -253,7 +253,8 @@ class LaunchScreen extends Component {
               newTeamModalVisible: true,
               teamName: "",
               teamId: "",
-              newRound: 1
+              newRound: 1,
+              navigating: false
             });
           }}
           title="Judge New Team"
@@ -266,7 +267,8 @@ class LaunchScreen extends Component {
               newTeamModalVisible: false,
               teamName: "",
               teamId: "",
-              newRound: 1
+              newRound: 1,
+              navigating: false
             })
           }
           onModalHide={() => {
