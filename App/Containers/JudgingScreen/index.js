@@ -54,6 +54,7 @@ export default class JudgingScreen extends Component {
     super(props);
 
     let teamRound = this.props.navigation.getParam(`teamRound`, {});
+    let editable = this.props.navigation.getParam(`editable`, false);
 
     const {
       round,
@@ -71,7 +72,7 @@ export default class JudgingScreen extends Component {
       blocksInCorrectSlot,
       perfectRun,
       obstaclesHit,
-      editable: false
+      editable
     };
   }
 
