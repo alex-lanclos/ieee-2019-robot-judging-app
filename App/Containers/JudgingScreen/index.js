@@ -220,52 +220,53 @@ class JudgingScreen extends Component {
     );
   }
 
-  _renderBottomButton = () => {
-    if (this.state.editable) {
-      return (
-        <BottomPillButton
-          onPress={() => {
-            let {
-              round,
-              id,
-              name,
-              blocksPickedUp,
-              blocksPlacedInMotherShip,
-              blocksInCorrectSlot,
-              perfectRun,
-              obstaclesHit
-            } = this.state;
+  calculateAndUpdate = () => {
+    let {
+      round,
+      id,
+      name,
+      blocksPickedUp,
+      blocksPlacedInMotherShip,
+      blocksInCorrectSlot,
+      perfectRun,
+      obstaclesHit,
+      editable
+    } = this.state;
 
-            let formattedRound = "";
-            switch (round) {
-              case 1:
-                formattedRound = "roundOne";
-                break;
-              case 2:
-                formattedRound = "roundTwo";
-                break;
-              case 3:
-                formattedRound = "roundThree";
-                break;
-            }
+    if (editable) {
+      let formattedRound = "";
+      switch (round) {
+        case 1:
+          formattedRound = "roundOne";
+          break;
+        case 2:
+          formattedRound = "roundTwo";
+          break;
+        case 3:
+          formattedRound = "roundThree";
+          break;
+      }
 
-            let team = {
-              round: formattedRound,
-              name,
-              id,
-              blocksPickedUp,
-              blocksPlacedInMotherShip,
-              blocksInCorrectSlot,
-              perfectRun,
-              obstaclesHit
-            };
-
-            this.props.updateTeam(team, formattedRound);
-          }}
-          title="Save"
-        />
-      );
+      let team = {
+        round,
+        name,
+        id,
+        blocksPickedUp,
+        blocksPlacedInMotherShip,
+        blocksInCorrectSlot,
+        perfectRun,
+        obstaclesHit
+      };
+      this.props.updateTeam(team, formattedRound);
     }
+
+    return calculateTotalScore(
+      blocksPickedUp,
+      blocksPlacedInMotherShip,
+      blocksInCorrectSlot,
+      perfectRun,
+      obstaclesHit
+    );
   };
 
   render() {
@@ -424,17 +425,10 @@ class JudgingScreen extends Component {
                 fontSize: scale(18),
                 fontWeight: "700"
               }}>
-              {calculateTotalScore(
-                blocksPickedUp,
-                blocksPlacedInMotherShip,
-                blocksInCorrectSlot,
-                perfectRun,
-                obstaclesHit
-              )}
+              {this.calculateAndUpdate()}
             </Text>
           </View>
         </ScrollView>
-        {this._renderBottomButton()}
       </View>
     );
   }

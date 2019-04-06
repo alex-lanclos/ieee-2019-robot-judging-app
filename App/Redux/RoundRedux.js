@@ -28,16 +28,22 @@ export const addTeam = (state, action) => {
 
 export const updateTeam = (state, action) => {
   const { team, round } = action;
-  let newRound = state[round];
 
-  let index = state[round].findIndex(cur => {
+  console.tron.log("round", round);
+  console.tron.log("state[round]", state[round]);
+
+  let oldRound = state[round];
+  let index = oldRound.findIndex(cur => {
     return cur.id === team.id;
   });
 
-  console.tron.log("index", index);
-
   if (index > -1) {
-    newRound[index] = team;
+    const updatedTean = { ...oldRound[index], ...team };
+    const newRound = [
+      ...oldRound.slice(0, index),
+      updatedTean,
+      ...oldRound.slice(index + 1)
+    ];
     return state.merge({ [round]: newRound });
   } else {
     return state.merge({ [round]: [...state[round], team] });

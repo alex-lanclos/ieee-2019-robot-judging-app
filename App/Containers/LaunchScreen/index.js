@@ -78,77 +78,20 @@ class LaunchScreen extends Component {
   radioOnPress = () => {};
 
   render() {
+    let { roundOne, roundTwo, roundThree } = this.props;
+
     let data = [
       {
         title: "Round 1",
-        teams: [
-          {
-            round: 1,
-            name: "Cool Team",
-            id: 0,
-            blocksPickedUp: 2,
-            blocksPlacedInMotherShip: 2,
-            blocksInCorrectSlot: 2,
-            perfectRun: true,
-            timeToCompletionMinutes: 5,
-            timeToCompletionSeconds: 30,
-            timeToCompletionMilliseconds: 0,
-            obstaclesHit: 0,
-            totalScore: 175
-          },
-          {
-            round: 1,
-            name: "Awesome Team That Has the Longest Name In Existence",
-            id: 1,
-            blocksPickedUp: 2,
-            blocksPlacedInMotherShip: 2,
-            blocksInCorrectSlot: 2,
-            perfectRun: true,
-            timeToCompletionMinutes: 5,
-            timeToCompletionSeconds: 30,
-            timeToCompletionMilliseconds: 0,
-            obstaclesHit: 0,
-            totalScore: 175
-          }
-        ]
+        teams: roundOne
       },
       {
         title: "Round 2",
-        teams: [
-          {
-            round: 2,
-            name: "Cool Team",
-            id: 0,
-            blocksPickedUp: 2,
-            blocksPlacedInMotherShip: 2,
-            blocksInCorrectSlot: 2,
-            perfectRun: false,
-            timeToCompletionMinutes: 5,
-            timeToCompletionSeconds: 30,
-            timeToCompletionMilliseconds: 0,
-            obstaclesHit: 0,
-            totalScore: 100
-          }
-        ]
+        teams: roundTwo
       },
       {
         title: "Round 3",
-        teams: [
-          {
-            round: 3,
-            name: "Cool Team",
-            id: 0,
-            blocksPickedUp: 2,
-            blocksPlacedInMotherShip: 2,
-            blocksInCorrectSlot: 2,
-            perfectRun: true,
-            timeToCompletionMinutes: 5,
-            timeToCompletionSeconds: 30,
-            timeToCompletionMilliseconds: 0,
-            obstaclesHit: 3,
-            totalScore: 85
-          }
-        ]
+        teams: roundThree
       }
     ];
 
@@ -451,7 +394,11 @@ class LaunchScreen extends Component {
 }
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    roundOne: state.rounds.roundOne,
+    roundTwo: state.rounds.roundTwo,
+    roundThree: state.rounds.roundThree
+  };
 };
 
 const mapDispatchToProps = dispatch => {
