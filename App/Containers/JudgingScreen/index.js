@@ -8,16 +8,20 @@ import {
   Switch,
   TouchableOpacity
 } from "react-native";
+import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Images, Colors } from "../../Themes";
 import { scale } from "../../Lib/Scaling";
 import { calculateTotalScore } from "../../Lib/CalculateTotal";
 import BottomPillButton from "../../Components/BottomPillButton";
 
+import RoundActions from "../../Redux/RoundRedux";
+
 // Styles
 import styles from "./styles";
+import { format } from "url";
 
-export default class JudgingScreen extends Component {
+class JudgingScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     const {
       params = {
@@ -26,8 +30,7 @@ export default class JudgingScreen extends Component {
     } = navigation.state;
 
     return {
-      headerTitle:
-        "Team " + params.teamRound.teamId + "-" + params.teamRound.teamName,
+      headerTitle: "Team " + params.teamRound.id + "-" + params.teamRound.name,
       backTitle: null,
       headerRight: (
         <View style={{ flexDirection: `row`, paddingRight: scale(16) }}>
@@ -58,6 +61,8 @@ export default class JudgingScreen extends Component {
 
     const {
       round,
+      id,
+      name,
       blocksPickedUp,
       blocksPlacedInMotherShip,
       blocksInCorrectSlot,
@@ -67,6 +72,8 @@ export default class JudgingScreen extends Component {
 
     this.state = {
       round,
+      id,
+      name,
       blocksPickedUp,
       blocksPlacedInMotherShip,
       blocksInCorrectSlot,
@@ -215,7 +222,49 @@ export default class JudgingScreen extends Component {
 
   _renderBottomButton = () => {
     if (this.state.editable) {
-      return <BottomPillButton onPress={() => {}} title="Save" />;
+      return (
+        <BottomPillButton
+          onPress={() => {
+            let {
+              round,
+              id,
+              name,
+              blocksPickedUp,
+              blocksPlacedInMotherShip,
+              blocksInCorrectSlot,
+              perfectRun,
+              obstaclesHit
+            } = this.state;
+
+            let formattedRound = "";
+            switch (round) {
+              case 1:
+                formattedRound = "roundOne";
+                break;
+              case 2:
+                formattedRound = "roundTwo";
+                break;
+              case 3:
+                formattedRound = "roundThree";
+                break;
+            }
+
+            let team = {
+              round: formattedRound,
+              name,
+              id,
+              blocksPickedUp,
+              blocksPlacedInMotherShip,
+              blocksInCorrectSlot,
+              perfectRun,
+              obstaclesHit
+            };
+
+            this.props.updateTeam(team, formattedRound);
+          }}
+          title="Save"
+        />
+      );
     }
   };
 
@@ -228,8 +277,6 @@ export default class JudgingScreen extends Component {
       perfectRun,
       obstaclesHit
     } = this.state;
-
-    console.tron.log("editable", this.state.editable);
 
     return (
       <View style={styles.mainContainer}>
@@ -392,3 +439,18 @@ export default class JudgingScreen extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    updateTeam: (team, round) => dispatch(RoundActions.updateTeam(team, round))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(JudgingScreen);

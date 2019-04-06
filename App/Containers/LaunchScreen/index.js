@@ -27,6 +27,8 @@ import { scale } from "../../Lib/Scaling";
 import { calculateTotalScore } from "../../Lib/CalculateTotal";
 import PillButton from "../../Components/PillButton";
 
+import RoundActions from "../../Redux/RoundRedux";
+
 let radio_props = [
   { label: "round 1", value: 1 },
   { label: "round 2", value: 2 },
@@ -82,8 +84,8 @@ class LaunchScreen extends Component {
         teams: [
           {
             round: 1,
-            teamName: "Cool Team",
-            teamId: 0,
+            name: "Cool Team",
+            id: 0,
             blocksPickedUp: 2,
             blocksPlacedInMotherShip: 2,
             blocksInCorrectSlot: 2,
@@ -96,8 +98,8 @@ class LaunchScreen extends Component {
           },
           {
             round: 1,
-            teamName: "Awesome Team That Has the Longest Name In Existence",
-            teamId: 1,
+            name: "Awesome Team That Has the Longest Name In Existence",
+            id: 1,
             blocksPickedUp: 2,
             blocksPlacedInMotherShip: 2,
             blocksInCorrectSlot: 2,
@@ -115,8 +117,8 @@ class LaunchScreen extends Component {
         teams: [
           {
             round: 2,
-            teamName: "Cool Team",
-            teamId: 0,
+            name: "Cool Team",
+            id: 0,
             blocksPickedUp: 2,
             blocksPlacedInMotherShip: 2,
             blocksInCorrectSlot: 2,
@@ -134,8 +136,8 @@ class LaunchScreen extends Component {
         teams: [
           {
             round: 3,
-            teamName: "Cool Team",
-            teamId: 0,
+            name: "Cool Team",
+            id: 0,
             blocksPickedUp: 2,
             blocksPlacedInMotherShip: 2,
             blocksInCorrectSlot: 2,
@@ -204,12 +206,9 @@ class LaunchScreen extends Component {
                             style={{
                               flex: 1
                             }}>
-                            {this._renderTextLabelAndValue("Id", item.teamId)}
+                            {this._renderTextLabelAndValue("Id", item.id)}
 
-                            {this._renderTextLabelAndValue(
-                              "Name",
-                              item.teamName
-                            )}
+                            {this._renderTextLabelAndValue("Name", item.name)}
                           </View>
 
                           <Text
@@ -251,8 +250,8 @@ class LaunchScreen extends Component {
             // this.props.navigation.navigate("JudgingScreen");
             this.setState({
               newTeamModalVisible: true,
-              teamName: "",
-              teamId: "",
+              name: "",
+              id: "",
               newRound: 1,
               navigating: false
             });
@@ -265,25 +264,41 @@ class LaunchScreen extends Component {
           onBackdropPress={() =>
             this.setState({
               newTeamModalVisible: false,
-              teamName: "",
-              teamId: "",
+              name: "",
+              id: "",
               newRound: 1,
               navigating: false
             })
           }
           onModalHide={() => {
             if (this.state.navigating) {
+              let round = "";
+              switch (this.state.newRound) {
+                case 1:
+                  round = "roundOne";
+                  break;
+                case 2:
+                  round = "roundTwo";
+                  break;
+                case 3:
+                  round = "roundThree";
+                  break;
+              }
+
+              let team = {
+                round: this.state.newRound,
+                name: this.state.teamName,
+                id: this.state.teamId,
+                blocksPickedUp: 0,
+                blocksPlacedInMotherShip: 0,
+                blocksInCorrectSlot: 0,
+                perfectRun: false,
+                obstaclesHit: 0
+              };
+
+              this.props.addTeam(team, round);
               this.props.navigation.navigate("JudgingScreen", {
-                teamRound: {
-                  round: this.state.newRound,
-                  teamName: this.state.teamName,
-                  teamId: this.state.teamId,
-                  blocksPickedUp: 0,
-                  blocksPlacedInMotherShip: 0,
-                  blocksInCorrectSlot: 0,
-                  perfectRun: false,
-                  obstaclesHit: 0
-                },
+                teamRound: team,
                 editable: true
               });
             }
@@ -440,7 +455,9 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    addTeam: (team, round) => dispatch(RoundActions.addTeam(team, round))
+  };
 };
 
 export default connect(
