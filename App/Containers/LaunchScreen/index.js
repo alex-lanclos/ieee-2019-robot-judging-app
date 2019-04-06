@@ -116,9 +116,6 @@ class LaunchScreen extends Component {
           )}
           initialPage={0}>
           {data.map(round => {
-            if (!round || round.teams.length == 0) {
-              return;
-            }
             return (
               <View tabLabel={round.title} key={round.title}>
                 <FlatList
@@ -250,7 +247,7 @@ class LaunchScreen extends Component {
             style={{
               width: "100%",
               height: scale(350),
-              marginBottom: scale(200),
+              marginBottom: scale(100),
               backgroundColor: Colors.black,
               paddingHorizontal: scale(16),
               borderRadius: 20
